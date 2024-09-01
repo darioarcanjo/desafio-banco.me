@@ -1,0 +1,84 @@
+class Banco:
+    def __init__(self):
+        self.saldo = 0
+        self.extrato = []
+        self.saques_dia = []
+        self.limite_saque = 500.00
+        self.max_saques_dia = 3
+
+    def formatar_valor(self, valor):
+        return f'R$ {valor:.2f}'
+
+    def depositar(self, valor):
+        if valor > 0:
+            self.saldo += valor
+            self.extrato.append(f'Depósito: {self.formatar_valor(valor)}')
+            print(f'Depósito de {self.formatar_valor(valor)} realizado com sucesso!')
+        else:
+            print('Valor de depósito deve ser positivo!')
+
+    def sacar(self, valor):
+        if valor > self.saldo:
+            print('Não será possível sacar. Saldo insuficiente!')
+            return
+        
+        if valor > self.limite_saque:
+            print(f'O valor máximo para saque é {self.formatar_valor(self.limite_saque)}!')
+            return
+        
+        if len(self.saques_dia) >= self.max_saques_dia:
+            print(f'Você já realizou o máximo de saques diários ({self.max_saques_dia})!')
+            return
+
+        self.saldo -= valor
+        self.extrato.append(f'Saque: {self.formatar_valor(valor)}')
+        self.saques_dia.append(valor)
+        print(f'Saque de {self.formatar_valor(valor)} realizado com sucesso!')
+
+    def visualizar_extrato(self):
+        print('Extrato:')
+        if not self.extrato:
+            print('Não foram realizadas movimentações.')
+        else:
+            for registro in self.extrato:
+                print(registro)
+        print(f'Saldo atual: {self.formatar_valor(self.saldo)}')
+        print('Saques do dia:')
+        if not self.saques_dia:
+            print('Nenhum saque realizado hoje.')
+        else:
+            for saque in self.saques_dia:
+                print(f'Saque: {self.formatar_valor(saque)}')
+
+    def resetar_saques_dia(self):
+        self.saques_dia.clear()
+
+
+def main():
+    banco = Banco()
+    
+    while True:
+        print("\nSelecione uma operação:")
+        print("1: Depositar")
+        print("2: Sacar")
+        print("3: Visualizar Extrato")
+        print("4: Sair")
+
+        opcao = input("Escolha a opção: ")
+
+        if opcao == '1':
+            valor = float(input("Digite o valor a ser depositado: "))
+            banco.depositar(valor)
+        elif opcao == '2':
+            valor = float(input("Digite o valor a ser sacado: "))
+            banco.sacar(valor)
+        elif opcao == '3':
+            banco.visualizar_extrato()
+        elif opcao == '4':
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção inválida! Tente novamente.")
+
+if __name__ == "__main__":
+    main()
